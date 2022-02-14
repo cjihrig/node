@@ -498,6 +498,14 @@ EnvironmentOptionsParser::EnvironmentOptionsParser() {
             "write warnings to file instead of stderr",
             &EnvironmentOptions::redirect_warnings,
             kAllowedInEnvironment);
+
+  AddOption("[has_test_string]", "", &EnvironmentOptions::has_test_string);
+  AddOption("--test",
+            "launch test runner on startup",
+            &EnvironmentOptions::test_runner,
+            kAllowedInEnvironment);
+  Implies("--test", "[has_test_string]");
+
   AddOption("--test-udp-no-try-send", "",  // For testing only.
             &EnvironmentOptions::test_udp_no_try_send);
   AddOption("--throw-deprecation",

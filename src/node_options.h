@@ -148,6 +148,8 @@ class EnvironmentOptions : public Options {
 #endif  // HAVE_INSPECTOR
   std::string redirect_warnings;
   std::string diagnostic_dir;
+  std::string test_runner;
+  bool has_test_string = false;
   bool test_udp_no_try_send = false;
   bool throw_deprecation = false;
   bool trace_atomics_wait = false;
