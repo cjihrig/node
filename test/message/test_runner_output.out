@@ -1,0 +1,277 @@
+TAP version 13
+ok 1 - sync pass todo # TODO
+  ---
+  duration_ms: *
+  ...
+ok 2 - sync pass todo with message # TODO this is a passing todo
+  ---
+  duration_ms: *
+  ...
+not ok 3 - sync fail todo # TODO
+  ---
+  duration_ms: *
+  error: thrown from sync fail todo
+  failureType: testCodeFailure
+  stack: |-
+    *
+    *
+    *
+    *
+    *
+    *
+    *
+    *
+    *
+    *
+  ...
+not ok 4 - sync fail todo with message # TODO this is a failing todo
+  ---
+  duration_ms: *
+  error: thrown from sync fail todo with message
+  failureType: testCodeFailure
+  stack: |-
+    *
+    *
+    *
+    *
+    *
+    *
+    *
+    *
+    *
+    *
+  ...
+ok 5 - sync skip pass # SKIP
+  ---
+  duration_ms: *
+  ...
+ok 6 - sync skip pass with message # SKIP this is skipped
+  ---
+  duration_ms: *
+  ...
+ok 7 - sync pass
+  ---
+  duration_ms: *
+  ...
+# this test should pass
+not ok 8 - sync throw fail
+  ---
+  duration_ms: *
+  error: thrown from sync throw fail
+  failureType: testCodeFailure
+  stack: |-
+    *
+    *
+    *
+    *
+    *
+    *
+    *
+    *
+    *
+    *
+  ...
+ok 9 - async skip pass # SKIP
+  ---
+  duration_ms: *
+  ...
+ok 10 - async pass
+  ---
+  duration_ms: *
+  ...
+not ok 11 - async throw fail
+  ---
+  duration_ms: *
+  error: thrown from async throw fail
+  failureType: testCodeFailure
+  stack: |-
+    *
+    *
+    *
+    *
+    *
+    *
+    *
+    *
+    *
+    *
+  ...
+not ok 12 - async skip fail # SKIP
+  ---
+  duration_ms: *
+  error: thrown from async throw fail
+  failureType: testCodeFailure
+  stack: |-
+    *
+    *
+    *
+    *
+    *
+    *
+    *
+    *
+    *
+    *
+  ...
+not ok 13 - async assertion fail
+  ---
+  duration_ms: *
+  error: Expected values to be strictly equal:
+
+true !== false
+
+  failureType: testCodeFailure
+  stack: |-
+
+    true !== false
+
+    *
+    *
+    *
+    *
+    *
+    *
+    *
+    *
+    *
+    *
+  ...
+ok 14 - resolve pass
+  ---
+  duration_ms: *
+  ...
+not ok 15 - reject fail
+  ---
+  duration_ms: *
+  error: rejected from reject fail
+  failureType: testCodeFailure
+  stack: |-
+    *
+    *
+    *
+    *
+    *
+    *
+    *
+    *
+    *
+    *
+  ...
+ok 16 - unhandled rejection - passes but warns
+  ---
+  duration_ms: *
+  ...
+ok 17 - async unhandled rejection - passes but warns
+  ---
+  duration_ms: *
+  ...
+ok 18 - immediate throw - passes but warns
+  ---
+  duration_ms: *
+  ...
+ok 19 - immediate reject - passes but warns
+  ---
+  duration_ms: *
+  ...
+ok 20 - immediate resolve pass
+  ---
+  duration_ms: *
+  ...
+    not ok 1 - +sync throw fail
+      ---
+      duration_ms: *
+      error: thrown from subtest sync throw fail
+      failureType: testCodeFailure
+      stack: |-
+        *
+        *
+        *
+        *
+        *
+        *
+        *
+        *
+        *
+        *
+      ...
+    # this subtest should make its parent test fail
+    1..1
+not ok 21 - subtest sync throw fail
+  ---
+  duration_ms: *
+  error: '1 subtest failed'
+  failureType: subtestsFailed
+  ...
+not ok 22 - sync throw non-error fail
+  ---
+  duration_ms: *
+  error: Symbol(thrown symbol from sync throw non-error fail)
+  failureType: testCodeFailure
+  ...
+    ok 1 - level 1a
+      ---
+      duration_ms: *
+      ...
+    ok 2 - level 1b
+      ---
+      duration_ms: *
+      ...
+    ok 3 - level 1c
+      ---
+      duration_ms: *
+      ...
+    ok 4 - level 1d
+      ---
+      duration_ms: *
+      ...
+    1..4
+ok 23 - level 0a
+  ---
+  duration_ms: *
+  ...
+    not ok 1 - +long running
+      ---
+      duration_ms: *
+      error: 'test did not finish before its parent and was cancelled'
+      failureType: cancelledByParent
+      ...
+        ok 1 - ++short running
+          ---
+          duration_ms: *
+          ...
+        1..1
+    ok 2 - +short running
+      ---
+      duration_ms: *
+      ...
+    1..2
+not ok 24 - top level
+  ---
+  duration_ms: *
+  error: '1 subtest failed'
+  failureType: subtestsFailed
+  ...
+ok 25 - invalid subtest - pass but subtest fails
+  ---
+  duration_ms: *
+  ...
+not ok 26 - invalid subtest fail
+  ---
+  duration_ms: *
+  error: 'test could not be started because its parent finished'
+  failureType: parentAlreadyFinished
+  stack: |-
+    Immediate.<anonymous> (*)
+  ...
+1..26
+# Warning: Test "unhandled rejection - passes but warns" generated asynchronous activity after the test ended. This activity created the error "Error: rejected from unhandled rejection fail" and would have caused the test to fail, but instead triggered an unhandledRejection event.
+# Warning: Test "async unhandled rejection - passes but warns" generated asynchronous activity after the test ended. This activity created the error "Error: rejected from async unhandled rejection fail" and would have caused the test to fail, but instead triggered an unhandledRejection event.
+# Warning: Test "immediate throw - passes but warns" generated asynchronous activity after the test ended. This activity created the error "Error: thrown from immediate throw fail" and would have caused the test to fail, but instead triggered an uncaughtException event.
+# Warning: Test "immediate reject - passes but warns" generated asynchronous activity after the test ended. This activity created the error "Error: rejected from immediate reject fail" and would have caused the test to fail, but instead triggered an unhandledRejection event.
+# tests 26
+# pass 6
+# fail 15
+# skipped 3
+# todo 2
+# duration_ms *
+
