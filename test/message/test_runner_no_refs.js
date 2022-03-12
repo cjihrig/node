@@ -1,3 +1,4 @@
+// Flags: --no-warnings
 'use strict';
 require('../common');
 const test = require('test_runner');
