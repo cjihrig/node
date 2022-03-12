@@ -10,8 +10,9 @@ ok 2 - sync pass todo with message # TODO this is a passing todo
 not ok 3 - sync fail todo # TODO
   ---
   duration_ms: *
-  error: thrown from sync fail todo
-  failureType: testCodeFailure
+  failureType: 'testCodeFailure'
+  error: 'thrown from sync fail todo'
+  code: ERR_TEST_FAILURE
   stack: |-
     *
     *
@@ -25,8 +26,9 @@ not ok 3 - sync fail todo # TODO
 not ok 4 - sync fail todo with message # TODO this is a failing todo
   ---
   duration_ms: *
-  error: thrown from sync fail todo with message
-  failureType: testCodeFailure
+  failureType: 'testCodeFailure'
+  error: 'thrown from sync fail todo with message'
+  code: ERR_TEST_FAILURE
   stack: |-
     *
     *
@@ -55,8 +57,9 @@ ok 7 - sync pass
 not ok 8 - sync throw fail
   ---
   duration_ms: *
-  error: thrown from sync throw fail
-  failureType: testCodeFailure
+  failureType: 'testCodeFailure'
+  error: 'thrown from sync throw fail'
+  code: ERR_TEST_FAILURE
   stack: |-
     *
     *
@@ -78,8 +81,9 @@ ok 10 - async pass
 not ok 11 - async throw fail
   ---
   duration_ms: *
-  error: thrown from async throw fail
-  failureType: testCodeFailure
+  failureType: 'testCodeFailure'
+  error: 'thrown from async throw fail'
+  code: ERR_TEST_FAILURE
   stack: |-
     *
     *
@@ -93,8 +97,9 @@ not ok 11 - async throw fail
 not ok 12 - async skip fail # SKIP
   ---
   duration_ms: *
-  error: thrown from async throw fail
-  failureType: testCodeFailure
+  failureType: 'testCodeFailure'
+  error: 'thrown from async throw fail'
+  code: ERR_TEST_FAILURE
   stack: |-
     *
     *
@@ -108,15 +113,10 @@ not ok 12 - async skip fail # SKIP
 not ok 13 - async assertion fail
   ---
   duration_ms: *
-  error: Expected values to be strictly equal:
-
-true !== false
-
-  failureType: testCodeFailure
+  failureType: 'testCodeFailure'
+  error: 'Expected values to be strictly equal:\n\ntrue !== false\n'
+  code: ERR_ASSERTION
   stack: |-
-
-    true !== false
-
     *
     *
     *
@@ -133,8 +133,9 @@ ok 14 - resolve pass
 not ok 15 - reject fail
   ---
   duration_ms: *
-  error: rejected from reject fail
-  failureType: testCodeFailure
+  failureType: 'testCodeFailure'
+  error: 'rejected from reject fail'
+  code: ERR_TEST_FAILURE
   stack: |-
     *
     *
@@ -168,8 +169,9 @@ ok 20 - immediate resolve pass
     not ok 1 - +sync throw fail
       ---
       duration_ms: *
-      error: thrown from subtest sync throw fail
-      failureType: testCodeFailure
+      failureType: 'testCodeFailure'
+      error: 'thrown from subtest sync throw fail'
+      code: ERR_TEST_FAILURE
       stack: |-
         *
         *
@@ -187,14 +189,16 @@ ok 20 - immediate resolve pass
 not ok 21 - subtest sync throw fail
   ---
   duration_ms: *
-  error: '1 subtest failed'
-  failureType: subtestsFailed
+  failureType: 'subtestsFailed'
+  error: "'1 subtest failed'"
+  code: ERR_TEST_FAILURE
   ...
 not ok 22 - sync throw non-error fail
   ---
   duration_ms: *
-  error: Symbol(thrown symbol from sync throw non-error fail)
-  failureType: testCodeFailure
+  failureType: 'testCodeFailure'
+  error: 'Symbol(thrown symbol from sync throw non-error fail)'
+  code: ERR_TEST_FAILURE
   ...
     ok 1 - level 1a
       ---
@@ -220,8 +224,9 @@ ok 23 - level 0a
     not ok 1 - +long running
       ---
       duration_ms: *
-      error: 'test did not finish before its parent and was cancelled'
-      failureType: cancelledByParent
+      failureType: 'cancelledByParent'
+      error: "'test did not finish before its parent and was cancelled'"
+      code: ERR_TEST_FAILURE
       ...
         ok 1 - ++short running
           ---
@@ -236,8 +241,9 @@ ok 23 - level 0a
 not ok 24 - top level
   ---
   duration_ms: *
-  error: '1 subtest failed'
-  failureType: subtestsFailed
+  failureType: 'subtestsFailed'
+  error: "'1 subtest failed'"
+  code: ERR_TEST_FAILURE
   ...
 ok 25 - invalid subtest - pass but subtest fails
   ---
@@ -254,8 +260,9 @@ ok 27 - sync skip option with message # SKIP this is skipped
 not ok 28 - sync skip option is false fail
   ---
   duration_ms: *
-  error: this should be executed
-  failureType: testCodeFailure
+  failureType: 'testCodeFailure'
+  error: 'this should be executed'
+  code: ERR_TEST_FAILURE
   stack: |-
     *
     *
@@ -268,8 +275,9 @@ not ok 28 - sync skip option is false fail
 not ok 29 - invalid subtest fail
   ---
   duration_ms: *
-  error: 'test could not be started because its parent finished'
-  failureType: parentAlreadyFinished
+  failureType: 'parentAlreadyFinished'
+  error: "'test could not be started because its parent finished'"
+  code: ERR_TEST_FAILURE
   stack: |-
     Immediate._onImmediate (*)
   ...

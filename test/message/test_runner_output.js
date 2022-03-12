@@ -103,7 +103,7 @@ test('subtest sync throw fail', async (t) => {
 });
 
 test('sync throw non-error fail', async (t) => {
-  throw Symbol('thrown symbol from sync throw non-error fail')
+  throw Symbol('thrown symbol from sync throw non-error fail');
 });
 
 test('level 0a', { concurrency: 4 }, async (t) => {
