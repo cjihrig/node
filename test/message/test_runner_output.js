@@ -106,11 +106,10 @@ test('sync throw non-error fail', async (t) => {
   throw Symbol('thrown symbol from sync throw non-error fail')
 });
 
-test('level 0a', async (t) => {
+test('level 0a', { concurrency: 4 }, async (t) => {
   t.test('level 1a', async (t) => {
     const p1a = new Promise((resolve) => {
       setTimeout(() => {
-        // console.log('resolving p1a');
         resolve();
       }, 1000);
     });
@@ -120,7 +119,6 @@ test('level 0a', async (t) => {
 
   t.test('level 1b', async (t) => {
     const p1b = new Promise((resolve) => {
-      // console.log('resolving p1b');
       resolve();
     });
 
@@ -130,7 +128,6 @@ test('level 0a', async (t) => {
   t.test('level 1c', async (t) => {
     const p1c = new Promise((resolve) => {
       setTimeout(() => {
-        // console.log('resolving p1c');
         resolve();
       }, 2000);
     });
@@ -141,7 +138,6 @@ test('level 0a', async (t) => {
   t.test('level 1d', async (t) => {
     const p1c = new Promise((resolve) => {
       setTimeout(() => {
-        // console.log('resolving p1d');
         resolve();
       }, 1500);
     });
@@ -151,7 +147,6 @@ test('level 0a', async (t) => {
 
   const p0a = new Promise((resolve) => {
     setTimeout(() => {
-      // console.log('resolving p0a');
       resolve();
     }, 3000);
   });
@@ -159,11 +154,10 @@ test('level 0a', async (t) => {
   return p0a;
 });
 
-test('top level', async (t) => {
+test('top level', { concurrency: 2 }, async (t) => {
   t.test('+long running', async (t) => {
     return new Promise((resolve, reject) => {
       setTimeout(resolve, 3000).unref();
-      // setTimeout(resolve, 3000); //.unref();
     });
   });
 
@@ -178,4 +172,16 @@ test('invalid subtest - pass but subtest fails', (t) => {
       throw new Error('this should not be thrown');
     });
   });
+});
+
+test('sync skip option', { skip: true }, (t) => {
+  throw new Error('this should not be executed');
+});
+
+test('sync skip option with message', { skip: 'this is skipped' }, (t) => {
+  throw new Error('this should not be executed');
+});
+
+test('sync skip option is false fail', { skip: false }, (t) => {
+  throw new Error('this should be executed');
 });
