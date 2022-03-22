@@ -2,7 +2,7 @@
 'use strict';
 require('../common');
 const assert = require('node:assert');
-const test = require('node:test');
+const test = require('node:test_runner');
 
 test('sync pass todo', (t) => {
   t.todo();

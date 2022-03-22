@@ -4,7 +4,7 @@ const assert = require('assert');
 const { spawnSync } = require('child_process');
 
 if (process.argv[2] === 'child') {
-  const test = require('node:test');
+  const test = require('test_runner');
 
   if (process.argv[3] === 'pass') {
     test('passing test', () => {

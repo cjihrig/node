@@ -6,26 +6,15 @@
 
 <!-- source_link=lib/test.js -->
 
-The `node:test` module facilitates the creation of JavaScript tests that
+The `test_runner` module facilitates the creation of JavaScript tests that
 report results in [TAP][] format. To access it:
 
 ```mjs
-import test from 'node:test';
+import test from 'node:test_runner';
 ```
 
 ```cjs
-const test = require('node:test');
-```
-
-This module is only available under the `node:` scheme. The following will not
-work:
-
-```mjs
-import test from 'test';
-```
-
-```cjs
-const test = require('test');
+const test = require('node:test_runner');
 ```
 
 Tests created via the `test` module consist of a single function that is
