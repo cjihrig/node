@@ -1507,6 +1507,31 @@ void WASI::SchedYield(const FunctionCallbackInfo<Value>& args) {
 }
 
 
+void WASI::SockAccept(const FunctionCallbackInfo<Value>& args) {
+  WASI* wasi;
+  uint32_t fd;
+  uint16_t flags;
+  uint32_t fd_ptr;
+  char* memory;
+  size_t mem_size;
+  RETURN_IF_BAD_ARG_COUNT(args, 3);
+  CHECK_TO_TYPE_OR_RETURN(args, args[0], Uint32, fd);
+  CHECK_TO_TYPE_OR_RETURN(args, args[1], Uint32, flags);
+  CHECK_TO_TYPE_OR_RETURN(args, args[2], Uint32, fd_ptr);
+  ASSIGN_INITIALIZED_OR_RETURN_UNWRAP(&wasi, args.This());
+  Debug(wasi, "sock_accept(%d, %d, %d)\n", fd, flags, fd_ptr);
+  GET_BACKING_STORE_OR_RETURN(wasi, args, &memory, &mem_size);
+  CHECK_BOUNDS_OR_RETURN(args, mem_size, fd_ptr, UVWASI_SERDES_SIZE_fd_t);
+  uvwasi_fd_t sock;
+  uvwasi_errno_t err = uvwasi_sock_accept(&wasi->uvw_, fd, flags, &sock);
+
+  if (err == UVWASI_ESUCCESS)
+    uvwasi_serdes_write_size_t(memory, fd_ptr, sock);
+
+  args.GetReturnValue().Set(err);
+}
+
+
 void WASI::SockRecv(const FunctionCallbackInfo<Value>& args) {
   WASI* wasi;
   uint32_t sock;
@@ -1723,6 +1748,7 @@ static void Initialize(Local<Object> target,
   env->SetProtoMethod(tmpl, "proc_raise", WASI::ProcRaise);
   env->SetProtoMethod(tmpl, "random_get", WASI::RandomGet);
   env->SetProtoMethod(tmpl, "sched_yield", WASI::SchedYield);
+  env->SetProtoMethod(tmpl, "sock_accept", WASI::SockAccept);
   env->SetProtoMethod(tmpl, "sock_recv", WASI::SockRecv);
   env->SetProtoMethod(tmpl, "sock_send", WASI::SockSend);
   env->SetProtoMethod(tmpl, "sock_shutdown", WASI::SockShutdown);

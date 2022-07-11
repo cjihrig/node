@@ -2515,6 +2515,26 @@ uvwasi_errno_t uvwasi_sched_yield(uvwasi_t* uvwasi) {
 }
 
 
+uvwasi_errno_t uvwasi_sock_accept(uvwasi_t* uvwasi,
+                                  uvwasi_fd_t fd,
+                                  uvwasi_fdflags_t flags,
+                                  uvwasi_fd_t* sock) {
+  /* TODO(cjihrig): Actually implement all of this. */
+#ifdef _WIN32
+  return UVWASI_ENOSYS;
+#else
+  if (uvwasi == NULL || sock == NULL)
+    return UVWASI_EINVAL;
+
+  *sock = socket(AF_INET, SOCK_STREAM, 0);
+  if (*sock < 0) {
+    return uvwasi__translate_uv_error(uv_translate_sys_error(errno));
+  }
+
+  return UVWASI_ESUCCESS;
+#endif /* _WIN32 */
+}
+
 uvwasi_errno_t uvwasi_sock_recv(uvwasi_t* uvwasi,
                                 uvwasi_fd_t sock,
                                 const uvwasi_iovec_t* ri_data,
