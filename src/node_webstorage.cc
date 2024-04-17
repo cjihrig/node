@@ -37,8 +37,6 @@ using v8::String;
 using v8::Uint32;
 using v8::Value;
 
-static constexpr const int kMaxStorageSize = 10 * 1024 * 1024;  // 10 MB
-
 #define THROW_SQLITE_ERROR(env, r)                                            \
   node::THROW_ERR_INVALID_STATE((env), sqlite3_errstr((r)))
 
@@ -98,12 +96,51 @@ void Storage::MemoryInfo(MemoryTracker* tracker) const {
 }
 
 bool Storage::Open() {
-  static const char sql[] = "CREATE TABLE IF NOT EXISTS nodejs_webstorage("
-                            "  key BLOB NOT NULL,"
-                            "  value BLOB NOT NULL,"
-                            "  size INTEGER NOT NULL,"
-                            "  PRIMARY KEY(key)"
-                            ")";
+  static const char sql[] =
+      "PRAGMA busy_timeout = 3000;"
+      "PRAGMA journal_mode = WAL;"
+      "PRAGMA optimize;"
+      "PRAGMA synchronous = NORMAL;"
+      "PRAGMA temp_store = memory;"
+      // recursive_triggers lets the delete trigger run when replacing an
+      // existing item. Without it, only the insert trigger runs.
+      "PRAGMA recursive_triggers = ON;"
+      ""
+      "CREATE TABLE IF NOT EXISTS nodejs_webstorage_size("
+      // max_size is 10MB. This can be made configurable in the future.
+      "  max_size INTEGER NOT NULL DEFAULT 10485760,"
+      "  total_size INTEGER NOT NULL,"
+      "  single_row_ INTEGER NOT NULL DEFAULT 1 CHECK(single_row_ = 1),"
+      "  PRIMARY KEY(single_row_)"
+      ") STRICT;"
+      ""
+      "CREATE TABLE IF NOT EXISTS nodejs_webstorage("
+      "  key BLOB NOT NULL,"
+      "  value BLOB NOT NULL,"
+      "  size INTEGER NOT NULL,"
+      "  PRIMARY KEY(key)"
+      ") STRICT;"
+      ""
+      "CREATE TRIGGER IF NOT EXISTS nodejs_quota_insert "
+      "BEFORE INSERT ON nodejs_webstorage "
+      "FOR EACH ROW "
+      "BEGIN "
+      "  UPDATE nodejs_webstorage_size SET total_size = total_size + NEW.size;"
+      "  SELECT RAISE(ABORT, 'QuotaExceeded')"
+      "  WHERE EXISTS ("
+      "    SELECT 1 FROM nodejs_webstorage_size WHERE total_size > max_size"
+      "  );"
+      "END;"
+      ""
+      "CREATE TRIGGER IF NOT EXISTS nodejs_quota_delete "
+      "AFTER DELETE ON nodejs_webstorage "
+      "FOR EACH ROW "
+      "BEGIN "
+      "  UPDATE nodejs_webstorage_size SET total_size = total_size - OLD.size;"
+      "END;"
+      ""
+      "INSERT OR IGNORE INTO nodejs_webstorage_size (total_size) VALUES (0)";
+
   if (db_ != nullptr) {
     return true;
   }
@@ -291,51 +328,14 @@ bool Storage::Store(Local<Name> key, Local<Value> value) {
     return false;
   }
 
-  static const char lookup[] =
-      "SELECT total_size, value FROM"
-      "  (SELECT SUM(size) AS total_size FROM nodejs_webstorage) t1"
-      "  FULL OUTER JOIN"
-      "  (SELECT value FROM nodejs_webstorage WHERE key = ? LIMIT 1) t2";
-  static const char upsert[] =
+  static const char sql[] =
       "INSERT OR REPLACE INTO nodejs_webstorage (key, value, size)"
       "  VALUES (?, ?, ?)";
   sqlite3_stmt* stmt = nullptr;
-  bool in_transaction = false;
-  auto cleanup = OnScopeLeave([&]() {
-    if (in_transaction) {
-      sqlite3_exec(db_, "ROLLBACK", 0, 0, nullptr);
-    }
-
-    sqlite3_finalize(stmt);
-  });
-  int r = sqlite3_exec(db_, "BEGIN TRANSACTION", 0, 0, nullptr);
-  CHECK_ERROR_OR_THROW(env(), r, SQLITE_OK, false);
-  in_transaction = true;
-  r = sqlite3_prepare_v2(db_, lookup, -1, &stmt, 0);
-  CHECK_ERROR_OR_THROW(env(), r, SQLITE_OK, false);
+  auto cleanup = OnScopeLeave([&]() { sqlite3_finalize(stmt); });
   node::Utf8Value utf8key(env()->isolate(), key);
   node::Utf8Value utf8val(env()->isolate(), val);
-  r = sqlite3_bind_blob(
-      stmt, 1, utf8key.out(), utf8key.length(), SQLITE_STATIC);
-  CHECK_ERROR_OR_THROW(env(), r, SQLITE_OK, false);
-  r = sqlite3_step(stmt);
-  CHECK_ERROR_OR_THROW(env(), r, SQLITE_ROW, false);
-  sqlite3_int64 total_size = sqlite3_column_int64(stmt, 0);
-  int existing_size = sqlite3_column_bytes(stmt, 1);
-  sqlite3_int64 new_size = total_size - existing_size + utf8val.length();
-
-  if (sqlite3_column_blob(stmt, 1) == nullptr) {
-    new_size += utf8key.length();
-  }
-
-  if (new_size > kMaxStorageSize) {
-    ThrowQuotaExceededException(env()->context());
-    return false;
-  }
-
-  r = sqlite3_finalize(stmt);
-  CHECK_ERROR_OR_THROW(env(), r, SQLITE_OK, false);
-  r = sqlite3_prepare_v2(db_, upsert, -1, &stmt, 0);
+  int r = sqlite3_prepare_v2(db_, sql, -1, &stmt, 0);
   CHECK_ERROR_OR_THROW(env(), r, SQLITE_OK, false);
   r = sqlite3_bind_blob(
       stmt, 1, utf8key.out(), utf8key.length(), SQLITE_STATIC);
@@ -346,10 +346,14 @@ bool Storage::Store(Local<Name> key, Local<Value> value) {
   r = sqlite3_bind_int64(
       stmt, 3, utf8key.length() + utf8val.length());
   CHECK_ERROR_OR_THROW(env(), r, SQLITE_OK, false);
-  CHECK_ERROR_OR_THROW(env(), sqlite3_step(stmt), SQLITE_DONE, false);
-  r = sqlite3_exec(db_, "COMMIT", 0, 0, nullptr);
-  CHECK_ERROR_OR_THROW(env(), r, SQLITE_OK, false);
-  in_transaction = false;
+
+  r = sqlite3_step(stmt);
+  if (r == SQLITE_CONSTRAINT) {
+    ThrowQuotaExceededException(env()->context());
+    return false;
+  }
+
+  CHECK_ERROR_OR_THROW(env(), r, SQLITE_DONE, false);
   return true;
 }
 
