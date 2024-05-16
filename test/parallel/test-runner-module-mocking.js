@@ -1,5 +1,6 @@
 // Flags: --experimental-test-module-mocks --experimental-require-module
 'use strict';
+process.env.NODE_DEBUG = 'test_runner';
 const common = require('../common');
 
 if (!common.isMainThread) {
