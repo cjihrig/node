@@ -194,10 +194,10 @@ bool Storage::Open() {
         CHECK_ERROR_OR_THROW(env(), r, SQLITE_OK, false);
     }
 
-    std::string set_user_version_sql =
-        "PRAGMA user_version = " + std::to_string(kCurrentSchemaVersion) + ";";
-    r = sqlite3_exec(db, set_user_version_sql.c_str(), 0, 0, nullptr);
-    CHECK_ERROR_OR_THROW(env(), r, SQLITE_OK, false);
+    // std::string set_user_version_sql =
+    //     "PRAGMA user_version = " + std::to_string(kCurrentSchemaVersion) + ";";
+    // r = sqlite3_exec(db, set_user_version_sql.c_str(), 0, 0, nullptr);
+    // CHECK_ERROR_OR_THROW(env(), r, SQLITE_OK, false);
   }
 
   db_ = conn_unique_ptr(db);
