@@ -164,9 +164,10 @@ void EnvironmentOptions::CheckOptions(std::vector<std::string>* errors,
           "--watch-path cannot be used in combination with --test");
     }
 
-#ifndef ALLOW_ATTACHING_DEBUGGER_IN_TEST_RUNNER
-    debug_options_.allow_attaching_debugger = false;
-#endif
+debug_options_.allow_attaching_debugger = true;
+// #ifndef ALLOW_ATTACHING_DEBUGGER_IN_TEST_RUNNER
+//     debug_options_.allow_attaching_debugger = false;
+// #endif
   }
 
   if (watch_mode) {
