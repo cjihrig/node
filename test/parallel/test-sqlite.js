@@ -589,170 +589,170 @@ suite('data binding and mapping', () => {
   });
 });
 
-// suite('manual transactions', () => {
-//   test('a transaction is committed', (t) => {
-//     const db = new DatabaseSync(nextDb());
-//     const setup = db.exec(`
-//       CREATE TABLE data(
-//         key INTEGER PRIMARY KEY
-//       ) STRICT;
-//     `);
-//     t.assert.strictEqual(setup, undefined);
-//     t.assert.deepStrictEqual(
-//       db.prepare('BEGIN').run(),
-//       { changes: 0, lastInsertRowid: 0 },
-//     );
-//     t.assert.deepStrictEqual(
-//       db.prepare('INSERT INTO data (key) VALUES (100)').run(),
-//       { changes: 1, lastInsertRowid: 100 },
-//     );
-//     t.assert.deepStrictEqual(
-//       db.prepare('COMMIT').run(),
-//       { changes: 1, lastInsertRowid: 100 },
-//     );
-//     t.assert.deepStrictEqual(
-//       db.prepare('SELECT * FROM data').all(),
-//       [{ key: 100 }],
-//     );
-//   });
+suite('manual transactions', () => {
+  test('a transaction is committed', (t) => {
+    const db = new DatabaseSync(nextDb());
+    const setup = db.exec(`
+      CREATE TABLE data(
+        key INTEGER PRIMARY KEY
+      ) STRICT;
+    `);
+    t.assert.strictEqual(setup, undefined);
+    t.assert.deepStrictEqual(
+      db.prepare('BEGIN').run(),
+      { changes: 0, lastInsertRowid: 0 },
+    );
+    t.assert.deepStrictEqual(
+      db.prepare('INSERT INTO data (key) VALUES (100)').run(),
+      { changes: 1, lastInsertRowid: 100 },
+    );
+    t.assert.deepStrictEqual(
+      db.prepare('COMMIT').run(),
+      { changes: 1, lastInsertRowid: 100 },
+    );
+    t.assert.deepStrictEqual(
+      db.prepare('SELECT * FROM data').all(),
+      [{ key: 100 }],
+    );
+  });
 
-//   test('a transaction is rolled back', (t) => {
-//     const db = new DatabaseSync(nextDb());
-//     const setup = db.exec(`
-//       CREATE TABLE data(
-//         key INTEGER PRIMARY KEY
-//       ) STRICT;
-//     `);
-//     t.assert.strictEqual(setup, undefined);
-//     t.assert.deepStrictEqual(
-//       db.prepare('BEGIN').run(),
-//       { changes: 0, lastInsertRowid: 0 },
-//     );
-//     t.assert.deepStrictEqual(
-//       db.prepare('INSERT INTO data (key) VALUES (100)').run(),
-//       { changes: 1, lastInsertRowid: 100 },
-//     );
-//     t.assert.deepStrictEqual(
-//       db.prepare('ROLLBACK').run(),
-//       { changes: 1, lastInsertRowid: 100 },
-//     );
-//     t.assert.deepStrictEqual(db.prepare('SELECT * FROM data').all(), []);
-//   });
-// });
+  test('a transaction is rolled back', (t) => {
+    const db = new DatabaseSync(nextDb());
+    const setup = db.exec(`
+      CREATE TABLE data(
+        key INTEGER PRIMARY KEY
+      ) STRICT;
+    `);
+    t.assert.strictEqual(setup, undefined);
+    t.assert.deepStrictEqual(
+      db.prepare('BEGIN').run(),
+      { changes: 0, lastInsertRowid: 0 },
+    );
+    t.assert.deepStrictEqual(
+      db.prepare('INSERT INTO data (key) VALUES (100)').run(),
+      { changes: 1, lastInsertRowid: 100 },
+    );
+    t.assert.deepStrictEqual(
+      db.prepare('ROLLBACK').run(),
+      { changes: 1, lastInsertRowid: 100 },
+    );
+    t.assert.deepStrictEqual(db.prepare('SELECT * FROM data').all(), []);
+  });
+});
 
-// suite('named parameters', () => {
-//   test('throws on unknown named parameters', (t) => {
-//     const db = new DatabaseSync(nextDb());
-//     const setup = db.exec(
-//       'CREATE TABLE types(key INTEGER PRIMARY KEY, val INTEGER) STRICT;'
-//     );
-//     t.assert.strictEqual(setup, undefined);
+suite('named parameters', () => {
+  test('throws on unknown named parameters', (t) => {
+    const db = new DatabaseSync(nextDb());
+    const setup = db.exec(
+      'CREATE TABLE types(key INTEGER PRIMARY KEY, val INTEGER) STRICT;'
+    );
+    t.assert.strictEqual(setup, undefined);
 
-//     t.assert.throws(() => {
-//       const stmt = db.prepare('INSERT INTO types (key, val) VALUES ($k, $v)');
-//       stmt.run({ $k: 1, $unknown: 1 });
-//     }, {
-//       code: 'ERR_INVALID_STATE',
-//       message: /Unknown named parameter '\$unknown'/,
-//     });
-//   });
+    t.assert.throws(() => {
+      const stmt = db.prepare('INSERT INTO types (key, val) VALUES ($k, $v)');
+      stmt.run({ $k: 1, $unknown: 1 });
+    }, {
+      code: 'ERR_INVALID_STATE',
+      message: /Unknown named parameter '\$unknown'/,
+    });
+  });
 
-//   test('bare named parameters are supported', (t) => {
-//     const db = new DatabaseSync(nextDb());
-//     const setup = db.exec(
-//       'CREATE TABLE data(key INTEGER PRIMARY KEY, val INTEGER) STRICT;'
-//     );
-//     t.assert.strictEqual(setup, undefined);
-//     const stmt = db.prepare('INSERT INTO data (key, val) VALUES ($k, $v)');
-//     stmt.run({ k: 1, v: 9 });
-//     t.assert.deepStrictEqual(
-//       db.prepare('SELECT * FROM data').get(),
-//       { key: 1, val: 9 },
-//     );
-//   });
+  test('bare named parameters are supported', (t) => {
+    const db = new DatabaseSync(nextDb());
+    const setup = db.exec(
+      'CREATE TABLE data(key INTEGER PRIMARY KEY, val INTEGER) STRICT;'
+    );
+    t.assert.strictEqual(setup, undefined);
+    const stmt = db.prepare('INSERT INTO data (key, val) VALUES ($k, $v)');
+    stmt.run({ k: 1, v: 9 });
+    t.assert.deepStrictEqual(
+      db.prepare('SELECT * FROM data').get(),
+      { key: 1, val: 9 },
+    );
+  });
 
-//   test('duplicate bare named parameters are supported', (t) => {
-//     const db = new DatabaseSync(nextDb());
-//     const setup = db.exec(
-//       'CREATE TABLE data(key INTEGER PRIMARY KEY, val INTEGER) STRICT;'
-//     );
-//     t.assert.strictEqual(setup, undefined);
-//     const stmt = db.prepare('INSERT INTO data (key, val) VALUES ($k, $k)');
-//     stmt.run({ k: 1 });
-//     t.assert.deepStrictEqual(
-//       db.prepare('SELECT * FROM data').get(),
-//       { key: 1, val: 1 },
-//     );
-//   });
+  test('duplicate bare named parameters are supported', (t) => {
+    const db = new DatabaseSync(nextDb());
+    const setup = db.exec(
+      'CREATE TABLE data(key INTEGER PRIMARY KEY, val INTEGER) STRICT;'
+    );
+    t.assert.strictEqual(setup, undefined);
+    const stmt = db.prepare('INSERT INTO data (key, val) VALUES ($k, $k)');
+    stmt.run({ k: 1 });
+    t.assert.deepStrictEqual(
+      db.prepare('SELECT * FROM data').get(),
+      { key: 1, val: 1 },
+    );
+  });
 
-//   test('bare named parameters throw on ambiguous names', (t) => {
-//     const db = new DatabaseSync(nextDb());
-//     const setup = db.exec(
-//       'CREATE TABLE types(key INTEGER PRIMARY KEY, val INTEGER) STRICT;'
-//     );
-//     t.assert.strictEqual(setup, undefined);
-//     const stmt = db.prepare('INSERT INTO types (key, val) VALUES ($k, @k)');
-//     t.assert.throws(() => {
-//       stmt.run({ k: 1 });
-//     }, {
-//       code: 'ERR_INVALID_STATE',
-//       message: 'Cannot create bare named parameter \'k\' because of ' +
-//                'conflicting names \'$k\' and \'@k\'.',
-//     });
-//   });
-// });
+  test('bare named parameters throw on ambiguous names', (t) => {
+    const db = new DatabaseSync(nextDb());
+    const setup = db.exec(
+      'CREATE TABLE types(key INTEGER PRIMARY KEY, val INTEGER) STRICT;'
+    );
+    t.assert.strictEqual(setup, undefined);
+    const stmt = db.prepare('INSERT INTO types (key, val) VALUES ($k, @k)');
+    t.assert.throws(() => {
+      stmt.run({ k: 1 });
+    }, {
+      code: 'ERR_INVALID_STATE',
+      message: 'Cannot create bare named parameter \'k\' because of ' +
+               'conflicting names \'$k\' and \'@k\'.',
+    });
+  });
+});
 
-// test('ERR_SQLITE_ERROR is thrown for errors originating from SQLite', (t) => {
-//   const db = new DatabaseSync(nextDb());
-//   const setup = db.exec(`
-//     CREATE TABLE test(
-//       key INTEGER PRIMARY KEY
-//     ) STRICT;
-//   `);
-//   t.assert.strictEqual(setup, undefined);
-//   const stmt = db.prepare('INSERT INTO test (key) VALUES (?)');
-//   t.assert.deepStrictEqual(stmt.run(1), { changes: 1, lastInsertRowid: 1 });
-//   t.assert.throws(() => {
-//     stmt.run(1);
-//   }, {
-//     code: 'ERR_SQLITE_ERROR',
-//     message: 'UNIQUE constraint failed: test.key',
-//     errcode: 1555,
-//     errstr: 'constraint failed',
-//   });
-// });
+test('ERR_SQLITE_ERROR is thrown for errors originating from SQLite', (t) => {
+  const db = new DatabaseSync(nextDb());
+  const setup = db.exec(`
+    CREATE TABLE test(
+      key INTEGER PRIMARY KEY
+    ) STRICT;
+  `);
+  t.assert.strictEqual(setup, undefined);
+  const stmt = db.prepare('INSERT INTO test (key) VALUES (?)');
+  t.assert.deepStrictEqual(stmt.run(1), { changes: 1, lastInsertRowid: 1 });
+  t.assert.throws(() => {
+    stmt.run(1);
+  }, {
+    code: 'ERR_SQLITE_ERROR',
+    message: 'UNIQUE constraint failed: test.key',
+    errcode: 1555,
+    errstr: 'constraint failed',
+  });
+});
 
-// test('in-memory databases are supported', (t) => {
-//   const db1 = new DatabaseSync(':memory:');
-//   const db2 = new DatabaseSync(':memory:');
-//   const setup1 = db1.exec(`
-//     CREATE TABLE data(key INTEGER PRIMARY KEY);
-//     INSERT INTO data (key) VALUES (1);
-//   `);
-//   const setup2 = db2.exec(`
-//     CREATE TABLE data(key INTEGER PRIMARY KEY);
-//     INSERT INTO data (key) VALUES (1);
-//   `);
-//   t.assert.strictEqual(setup1, undefined);
-//   t.assert.strictEqual(setup2, undefined);
-//   t.assert.deepStrictEqual(
-//     db1.prepare('SELECT * FROM data').all(),
-//     [{ key: 1 }]
-//   );
-//   t.assert.deepStrictEqual(
-//     db2.prepare('SELECT * FROM data').all(),
-//     [{ key: 1 }]
-//   );
-// });
+test('in-memory databases are supported', (t) => {
+  const db1 = new DatabaseSync(':memory:');
+  const db2 = new DatabaseSync(':memory:');
+  const setup1 = db1.exec(`
+    CREATE TABLE data(key INTEGER PRIMARY KEY);
+    INSERT INTO data (key) VALUES (1);
+  `);
+  const setup2 = db2.exec(`
+    CREATE TABLE data(key INTEGER PRIMARY KEY);
+    INSERT INTO data (key) VALUES (1);
+  `);
+  t.assert.strictEqual(setup1, undefined);
+  t.assert.strictEqual(setup2, undefined);
+  t.assert.deepStrictEqual(
+    db1.prepare('SELECT * FROM data').all(),
+    [{ key: 1 }]
+  );
+  t.assert.deepStrictEqual(
+    db2.prepare('SELECT * FROM data').all(),
+    [{ key: 1 }]
+  );
+});
 
-// test('PRAGMAs are supported', (t) => {
-//   const db = new DatabaseSync(nextDb());
-//   t.assert.deepStrictEqual(
-//     db.prepare('PRAGMA journal_mode = WAL').get(),
-//     { journal_mode: 'wal' },
-//   );
-//   t.assert.deepStrictEqual(
-//     db.prepare('PRAGMA journal_mode').get(),
-//     { journal_mode: 'wal' },
-//   );
-// });
+test('PRAGMAs are supported', (t) => {
+  const db = new DatabaseSync(nextDb());
+  t.assert.deepStrictEqual(
+    db.prepare('PRAGMA journal_mode = WAL').get(),
+    { journal_mode: 'wal' },
+  );
+  t.assert.deepStrictEqual(
+    db.prepare('PRAGMA journal_mode').get(),
+    { journal_mode: 'wal' },
+  );
+});
