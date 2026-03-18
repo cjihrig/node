@@ -942,6 +942,37 @@ class LiteralTestSuite(TestSuite):
       tests_repos.GetTestStatus(context, sections, defs)
 
 
+def GetBuildRequirementCommand(workspace, requirement, mode):
+  if utils.IsWindows():
+    command = ['cmd', '/d', '/s', '/c', 'vcbuild.bat']
+    if mode == 'debug':
+      command.append('debug')
+    elif mode == 'release':
+      command.append('release')
+    command.append(requirement)
+    return command
+
+  build_type = 'Debug' if mode == 'debug' else 'Release'
+  return ['make', 'BUILDTYPE=%s' % build_type, requirement]
+
+
+def RunBuildRequirements(root, paths, context, modes):
+  requirements = []
+  for path in paths:
+    requirements += root.GetBuildRequirements(path, context)
+
+  requirements = [r for r in requirements if r == 'build-ffi-tests']
+  requirements = list(dict.fromkeys(requirements))
+  modes = list(dict.fromkeys(modes))
+
+  for mode in modes:
+    for requirement in requirements:
+      command = GetBuildRequirementCommand(context.workspace, requirement, mode)
+      if context.verbose:
+        print('#', ' '.join(command))
+      subprocess.check_call(command, cwd=context.workspace)
+
+
 TIMEOUT_SCALEFACTOR = {
     'arm'       : { 'debug' :  8, 'release' : 3 }, # The ARM buildbots are slow.
     'riscv64'   : { 'debug' :  8, 'release' : 3 }, # The riscv devices are slow.
@@ -1709,6 +1740,12 @@ def Main():
 
   if options.error_reporter:
     context.use_error_reporter = True
+
+  try:
+    RunBuildRequirements(root, paths, context, options.mode)
+  except subprocess.CalledProcessError as e:
+    print('Failed to build test requirements')
+    return e.returncode
 
   # Get status for tests
   sections = [ ]

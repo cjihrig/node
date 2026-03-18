@@ -222,6 +222,8 @@ testclean: ## Remove test artifacts.
 # Next one is legacy remove this at some point
 	$(RM) -r test/tmp*
 	$(RM) -r test/.tmp*
+	$(RM) test/ffi/.buildstamp
+	$(RM) -r test/ffi/fixture_library/build
 
 .PHONY: distclean
 .NOTPARALLEL: distclean
@@ -318,7 +320,7 @@ v8: ## Build deps/v8.
 		tools/make-v8.sh $(V8_ARCH).$(BUILDTYPE_LOWER) $(V8_BUILD_OPTIONS)
 
 .PHONY: jstest
-jstest: build-addons build-js-native-api-tests build-node-api-tests build-sqlite-tests ## Run addon tests and JS tests.
+jstest: build-addons build-js-native-api-tests build-node-api-tests build-sqlite-tests build-ffi-tests ## Run addon tests and JS tests.
 	$(PYTHON) tools/test.py $(PARALLEL_ARGS) --mode=$(BUILDTYPE_LOWER) \
 		$(TEST_CI_ARGS) \
 		--skip-tests=$(CI_SKIP_TESTS) \
@@ -344,6 +346,7 @@ test: all ## Run default tests, linters, and build docs.
 	$(MAKE) -s build-js-native-api-tests
 	$(MAKE) -s build-node-api-tests
 	$(MAKE) -s build-sqlite-tests
+	$(MAKE) -s build-ffi-tests
 	$(MAKE) -s cctest
 	$(MAKE) -s jstest
 
@@ -353,6 +356,7 @@ test-only: all  ## Run default tests, without linters or building the docs.
 	$(MAKE) build-js-native-api-tests
 	$(MAKE) build-node-api-tests
 	$(MAKE) build-sqlite-tests
+	$(MAKE) build-ffi-tests
 	$(MAKE) cctest
 	$(MAKE) jstest
 	$(MAKE) tooltest
@@ -364,6 +368,7 @@ test-cov: all ## Run coverage tests.
 	$(MAKE) build-js-native-api-tests
 	$(MAKE) build-node-api-tests
 	$(MAKE) build-sqlite-tests
+	$(MAKE) build-ffi-tests
 	$(MAKE) cctest
 	CI_SKIP_TESTS=$(COV_SKIP_TESTS) $(MAKE) jstest
 
@@ -595,7 +600,7 @@ test-all-suites: | clear-stalled test-build bench-addons-build doc-only ## Run a
 	$(PYTHON) tools/test.py $(PARALLEL_ARGS) --mode=$(BUILDTYPE_LOWER) test/*
 
 JS_SUITES ?= default
-NATIVE_SUITES ?= addons js-native-api node-api embedding
+NATIVE_SUITES ?= addons js-native-api node-api ffi embedding
 # CI_* variables should be kept synchronized with the ones in vcbuild.bat
 CI_NATIVE_SUITES ?= $(NATIVE_SUITES) benchmark
 CI_JS_SUITES ?= $(JS_SUITES) pummel

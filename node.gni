@@ -44,11 +44,13 @@ declare_args() {
   node_use_sqlite = true
 
   # Build node with FFI support.
-  # Disabled in GN builds. The unofficial GN build does not support node:ffi.
+  # This setting is present only for source compatibility with the GYP build.
+  # The unofficial GN build does not support node:ffi and this must remain false.
   node_use_ffi = false
 
   # Link against a shared libffi when FFI support is enabled.
-  # Unsupported in GN builds.
+  # This setting is present only for source compatibility with the GYP build.
+  # The unofficial GN build does not support shared libffi and this must remain false.
   node_shared_ffi = false
 
   # Use the specified path to system CA (PEM format) in addition to

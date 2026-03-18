@@ -91,10 +91,9 @@ void PerProcessOptions::CheckOptions(std::vector<std::string>* errors,
     if ((secure_heap & (secure_heap - 1)) != 0)
       errors->push_back("--secure-heap must be a power of 2");
     secure_heap_min =
-        std::min({
-            secure_heap,
-            secure_heap_min,
-            static_cast<int64_t>(std::numeric_limits<int>::max())});
+        std::min({secure_heap,
+                  secure_heap_min,
+                  static_cast<int64_t>(std::numeric_limits<int>::max())});
     secure_heap_min = std::max(static_cast<int64_t>(2), secure_heap_min);
     if ((secure_heap_min & (secure_heap_min - 1)) != 0)
       errors->push_back("--secure-heap-min must be a power of 2");
@@ -111,8 +110,7 @@ void PerProcessOptions::CheckOptions(std::vector<std::string>* errors,
 #endif  // !defined(HAVE_LIEF)
   }
 
-  if (use_largepages != "off" &&
-      use_largepages != "on" &&
+  if (use_largepages != "off" && use_largepages != "on" &&
       use_largepages != "silent") {
     errors->push_back("invalid value for --use-largepages");
   }
@@ -196,10 +194,8 @@ void EnvironmentOptions::CheckOptions(std::vector<std::string>* errors,
 
   if (!unhandled_rejections.empty() &&
       unhandled_rejections != "warn-with-error-code" &&
-      unhandled_rejections != "throw" &&
-      unhandled_rejections != "strict" &&
-      unhandled_rejections != "warn" &&
-      unhandled_rejections != "none") {
+      unhandled_rejections != "throw" && unhandled_rejections != "strict" &&
+      unhandled_rejections != "warn" && unhandled_rejections != "none") {
     errors->push_back("invalid value for --unhandled-rejections");
   }
 
@@ -291,8 +287,8 @@ void EnvironmentOptions::CheckOptions(std::vector<std::string>* errors,
   }
 
   if (cpu_prof && cpu_prof_dir.empty() && !diagnostic_dir.empty()) {
-      cpu_prof_dir = diagnostic_dir;
-    }
+    cpu_prof_dir = diagnostic_dir;
+  }
 
   if (!heap_prof) {
     if (!heap_prof_name.empty()) {
@@ -404,7 +400,7 @@ class EnvironmentOptionsParser : public OptionsParser<EnvironmentOptions> {
  public:
   EnvironmentOptionsParser();
   explicit EnvironmentOptionsParser(const DebugOptionsParser& dop)
-    : EnvironmentOptionsParser() {
+      : EnvironmentOptionsParser() {
     Insert(dop, &EnvironmentOptions::get_debug_options);
   }
 };
@@ -427,13 +423,14 @@ const EnvironmentOptionsParser _eop_instance{_dop_instance};
 
 // This Parse is not dead code. It is used by embedders (e.g., Electron).
 template <>
-void Parse(
-  StringVector* const args, StringVector* const exec_args,
-  StringVector* const v8_args,
-  DebugOptions* const options,
-  OptionEnvvarSettings required_env_settings, StringVector* const errors) {
+void Parse(StringVector* const args,
+           StringVector* const exec_args,
+           StringVector* const v8_args,
+           DebugOptions* const options,
+           OptionEnvvarSettings required_env_settings,
+           StringVector* const errors) {
   _dop_instance.Parse(
-    args, exec_args, v8_args, options, required_env_settings, errors);
+      args, exec_args, v8_args, options, required_env_settings, errors);
 }
 #else
 const EnvironmentOptionsParser _eop_instance{};
@@ -442,23 +439,25 @@ const PerIsolateOptionsParser _piop_instance{_eop_instance};
 const PerProcessOptionsParser _ppop_instance{_piop_instance};
 
 template <>
-void Parse(
-  StringVector* const args, StringVector* const exec_args,
-  StringVector* const v8_args,
-  PerIsolateOptions* const options,
-  OptionEnvvarSettings required_env_settings, StringVector* const errors) {
+void Parse(StringVector* const args,
+           StringVector* const exec_args,
+           StringVector* const v8_args,
+           PerIsolateOptions* const options,
+           OptionEnvvarSettings required_env_settings,
+           StringVector* const errors) {
   _piop_instance.Parse(
-    args, exec_args, v8_args, options, required_env_settings, errors);
+      args, exec_args, v8_args, options, required_env_settings, errors);
 }
 
 template <>
-void Parse(
-  StringVector* const args, StringVector* const exec_args,
-  StringVector* const v8_args,
-  PerProcessOptions* const options,
-  OptionEnvvarSettings required_env_settings, StringVector* const errors) {
+void Parse(StringVector* const args,
+           StringVector* const exec_args,
+           StringVector* const v8_args,
+           PerProcessOptions* const options,
+           OptionEnvvarSettings required_env_settings,
+           StringVector* const errors) {
   _ppop_instance.Parse(
-    args, exec_args, v8_args, options, required_env_settings, errors);
+      args, exec_args, v8_args, options, required_env_settings, errors);
 }
 
 // XXX: If you add an option here, please also add it to doc/node.1 and
@@ -476,7 +475,7 @@ DebugOptionsParser::DebugOptionsParser() {
             "activate inspector on host:port (default: 127.0.0.1:9229)",
             &DebugOptions::inspector_enabled,
             kAllowedInEnvvar);
-  AddAlias("--inspect=", { "--inspect-port", "--inspect" });
+  AddAlias("--inspect=", {"--inspect-port", "--inspect"});
 
   AddOption("--debug", "", &DebugOptions::deprecated_debug);
   AddAlias("--debug=", "--debug");
@@ -488,11 +487,11 @@ DebugOptionsParser::DebugOptionsParser() {
             &DebugOptions::break_first_line,
             kAllowedInEnvvar);
   Implies("--inspect-brk", "--inspect");
-  AddAlias("--inspect-brk=", { "--inspect-port", "--inspect-brk" });
+  AddAlias("--inspect-brk=", {"--inspect-port", "--inspect-brk"});
 
   AddOption("--inspect-brk-node", "", &DebugOptions::break_node_first_line);
   Implies("--inspect-brk-node", "--inspect");
-  AddAlias("--inspect-brk-node=", { "--inspect-port", "--inspect-brk-node" });
+  AddAlias("--inspect-brk-node=", {"--inspect-port", "--inspect-brk-node"});
 
   AddOption(
       "--inspect-wait",
@@ -812,9 +811,7 @@ EnvironmentOptionsParser::EnvironmentOptionsParser() {
             "preserve symbolic links when resolving the main module",
             &EnvironmentOptions::preserve_symlinks_main,
             kAllowedInEnvvar);
-  AddOption("--prof",
-            "Generate V8 profiler output.",
-            V8Option{});
+  AddOption("--prof", "Generate V8 profiler output.", V8Option{});
   AddOption("--prof-process",
             "process V8 profiler output generated using --prof",
             &EnvironmentOptions::prof_process);
@@ -1148,7 +1145,7 @@ EnvironmentOptionsParser::EnvironmentOptionsParser() {
             &EnvironmentOptions::print_eval);
   AddAlias("-e", "--eval");
   AddAlias("--print <arg>", "-pe");
-  AddAlias("-pe", { "--print", "--eval" });
+  AddAlias("-pe", {"--print", "--eval"});
   AddAlias("-p", "--print");
   AddOption("--require",
             "CommonJS module to preload (option can be repeated)",
@@ -1220,7 +1217,7 @@ EnvironmentOptionsParser::EnvironmentOptionsParser() {
 }
 
 PerIsolateOptionsParser::PerIsolateOptionsParser(
-  const EnvironmentOptionsParser& eop) {
+    const EnvironmentOptionsParser& eop) {
   AddOption("--track-heap-objects",
             "track heap object allocations for heap snapshots",
             &PerIsolateOptions::track_heap_objects,
@@ -1305,7 +1302,7 @@ PerIsolateOptionsParser::PerIsolateOptionsParser(
 }
 
 PerProcessOptionsParser::PerProcessOptionsParser(
-  const PerIsolateOptionsParser& iop) {
+    const PerIsolateOptionsParser& iop) {
   AddOption("--title",
             "the process title to use on startup",
             &PerProcessOptions::title,
@@ -1319,8 +1316,8 @@ PerProcessOptionsParser::PerProcessOptionsParser(
             "data, it supports ${rotation} and ${pid}.",
             &PerProcessOptions::trace_event_file_pattern,
             kAllowedInEnvvar);
-  AddAlias("--trace-events-enabled", {
-    "--trace-event-categories", "v8,node,node.async_hooks" });
+  AddAlias("--trace-events-enabled",
+           {"--trace-event-categories", "v8,node,node.async_hooks"});
   AddOption("--v8-pool-size",
             "set V8's thread pool size",
             &PerProcessOptions::v8_thread_pool_size,
@@ -1525,7 +1522,7 @@ inline uint16_t ParseAndValidatePort(const std::string_view port,
 }
 
 HostPort SplitHostPort(const std::string& arg,
-                      std::vector<std::string>* errors) {
+                       std::vector<std::string>* errors) {
   // remove_brackets only works if no port is specified
   // so if it has an effect only an IPv6 address was specified.
   std::string host = RemoveBrackets(arg);
@@ -1541,11 +1538,11 @@ HostPort SplitHostPort(const std::string& arg,
         return HostPort{arg, DebugOptions::kDefaultInspectorPort};
       }
     }
-    return HostPort { "", ParseAndValidatePort(arg, errors) };
+    return HostPort{"", ParseAndValidatePort(arg, errors)};
   }
   // Host and port found:
-  return HostPort { RemoveBrackets(arg.substr(0, colon)),
-                    ParseAndValidatePort(arg.substr(colon + 1), errors) };
+  return HostPort{RemoveBrackets(arg.substr(0, colon)),
+                  ParseAndValidatePort(arg.substr(colon + 1), errors)};
 }
 
 std::string GetBashCompletion() {
@@ -2148,8 +2145,7 @@ void Initialize(Local<Object> target,
   NODE_DEFINE_CONSTANT(types, kString);
   NODE_DEFINE_CONSTANT(types, kHostPort);
   NODE_DEFINE_CONSTANT(types, kStringList);
-  target->Set(context, FIXED_ONE_BYTE_STRING(isolate, "types"), types)
-      .Check();
+  target->Set(context, FIXED_ONE_BYTE_STRING(isolate, "types"), types).Check();
 }
 
 void RegisterExternalReferences(ExternalReferenceRegistry* registry) {

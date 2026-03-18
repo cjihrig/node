@@ -37,8 +37,8 @@
 #endif  // HAVE_OPENSSL
 
 #ifndef OPENSSL_NO_QUIC
-#include <ngtcp2/version.h>
 #include <nghttp3/version.h>
+#include <ngtcp2/version.h>
 #endif
 
 #ifdef NODE_HAVE_I18N_SUPPORT
@@ -125,19 +125,12 @@ Metadata::Versions::Versions() {
           std::to_string(LIEF_VERSION_PATCH));
 #endif
 
-  llhttp =
-      NODE_STRINGIFY(LLHTTP_VERSION_MAJOR)
-      "."
-      NODE_STRINGIFY(LLHTTP_VERSION_MINOR)
-      "."
-      NODE_STRINGIFY(LLHTTP_VERSION_PATCH);
+  llhttp = NODE_STRINGIFY(LLHTTP_VERSION_MAJOR) "." NODE_STRINGIFY(
+      LLHTTP_VERSION_MINOR) "." NODE_STRINGIFY(LLHTTP_VERSION_PATCH);
 
-  brotli =
-    std::to_string(BrotliEncoderVersion() >> 24) +
-    "." +
-    std::to_string((BrotliEncoderVersion() & 0xFFF000) >> 12) +
-    "." +
-    std::to_string(BrotliEncoderVersion() & 0xFFF);
+  brotli = std::to_string(BrotliEncoderVersion() >> 24) + "." +
+           std::to_string((BrotliEncoderVersion() & 0xFFF000) >> 12) + "." +
+           std::to_string(BrotliEncoderVersion() & 0xFFF);
 #ifndef NODE_SHARED_BUILTIN_UNDICI_UNDICI_PATH
   undici = UNDICI_VERSION;
 #endif
@@ -173,9 +166,9 @@ Metadata::Versions::Versions() {
 #if HAVE_SQLITE
   sqlite = SQLITE_VERSION;
 #endif  // HAVE_SQLITE
-#if HAVE_FFI
+#if HAVE_FFI && !NODE_SHARED_FFI
   libffi = FFI_VERSION_STRING;
-#endif  // HAVE_FFI
+#endif  // HAVE_FFI && !NODE_SHARED_FFI
   ada = ADA_VERSION;
   nbytes = NBYTES_VERSION;
 }
