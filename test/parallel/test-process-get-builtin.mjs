@@ -1,4 +1,4 @@
-import { hasCrypto, hasIntl, hasInspector, hasSQLite, hasFFI } from '../common/index.mjs';
+import { hasCrypto, hasIntl, hasInspector, hasSQLite } from '../common/index.mjs';
 import assert from 'node:assert';
 import { builtinModules } from 'node:module';
 import { isMainThread } from 'node:worker_threads';

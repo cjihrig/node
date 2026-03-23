@@ -32,21 +32,27 @@ def find_compiler():
     raise RuntimeError('Unable to locate a compiler for preprocessing assembly')
 
 
+def normalize_path(value):
+    return str(value).strip().strip('"')
+
+
 def preprocess(args):
     compiler = find_compiler()
-    output = Path(args.output)
+    input_path = normalize_path(args.input)
+    output = Path(normalize_path(args.output))
+    include_dirs = [normalize_path(include_dir) for include_dir in args.include_dir]
     output.parent.mkdir(parents=True, exist_ok=True)
 
     if os.name == 'nt' and Path(compiler[0]).name.lower() in ('cl.exe', 'cl', 'clang-cl.exe', 'clang-cl'):
         command = compiler + ['/nologo', '/EP', '/TC']
-        command += [f'/I{include_dir}' for include_dir in args.include_dir]
+        command += [f'/I{include_dir}' for include_dir in include_dirs]
         command += [f'/D{define}' for define in args.define]
-        command += [args.input]
+        command += [input_path]
     else:
         command = compiler + ['-E', '-P', '-x', 'c']
-        command += [f'-I{include_dir}' for include_dir in args.include_dir]
+        command += [f'-I{include_dir}' for include_dir in include_dirs]
         command += [f'-D{define}' for define in args.define]
-        command += [args.input]
+        command += [input_path]
 
     result = subprocess.run(command, capture_output=True, text=True)
     if result.returncode != 0:

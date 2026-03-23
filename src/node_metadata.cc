@@ -17,7 +17,7 @@
 #endif  // HAVE_SQLITE
 #if HAVE_FFI
 #include "ffi.h"
-#endif  // HAVE_FFI && !NODE_SHARED_FFI
+#endif  // HAVE_FFI
 #include "undici_version.h"
 #include "util.h"
 #include "uv.h"

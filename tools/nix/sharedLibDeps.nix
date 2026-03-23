@@ -4,6 +4,7 @@
   withQuic ? false,
   withSQLite ? true,
   withSSL ? true,
+  withFFI ? true,
   withTemporal ? false,
 }:
 {
@@ -20,7 +21,6 @@
     zlib
     zstd
     ;
-  ffi = pkgs.libffi;
   cares = pkgs.c-ares;
   hdr-histogram = pkgs.hdrhistogram_c;
   http-parser = pkgs.llhttp;
@@ -46,6 +46,9 @@
 })
 // (pkgs.lib.optionalAttrs withSQLite {
   inherit (pkgs) sqlite;
+})
+// (pkgs.lib.optionalAttrs withFFI {
+  inherit (pkgs) ffi;
 })
 // (pkgs.lib.optionalAttrs withSSL (
   let
