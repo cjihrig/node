@@ -527,7 +527,6 @@ void ToString(const FunctionCallbackInfo<Value>& args) {
   Local<String> out;
   if (!String::NewFromUtf8(isolate, str, NewStringType::kNormal)
            .ToLocal(&out)) {
-    env->ThrowError("Failed to create a string from native memory");
     return;
   }
 
@@ -581,7 +580,6 @@ void ToBuffer(const FunctionCallbackInfo<Value>& args) {
   if (args.Length() < 3 || args[2]->IsUndefined() ||
       args[2]->BooleanValue(isolate)) {
     if (!Buffer::Copy(env, reinterpret_cast<char*>(ptr), len).ToLocal(&buf)) {
-      env->ThrowError("Failed to create a Buffer from native memory");
       return;
     }
   } else {
@@ -592,7 +590,6 @@ void ToBuffer(const FunctionCallbackInfo<Value>& args) {
              [](char* data, void* hint) {},
              nullptr)
              .ToLocal(&buf)) {
-      env->ThrowError("Failed to create a Buffer from native memory");
       return;
     }
   }

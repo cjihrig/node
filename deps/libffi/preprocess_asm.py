@@ -36,11 +36,24 @@ def normalize_path(value):
     return str(value).strip().strip('"')
 
 
+def unique_paths(paths):
+    seen = set()
+    result = []
+    for path in paths:
+        if path in seen:
+            continue
+        seen.add(path)
+        result.append(path)
+    return result
+
+
 def preprocess(args):
     compiler = find_compiler()
     input_path = normalize_path(args.input)
     output = Path(normalize_path(args.output))
     include_dirs = [normalize_path(include_dir) for include_dir in args.include_dir]
+    include_dirs.append(str(output.parent))
+    include_dirs = unique_paths(include_dirs)
     output.parent.mkdir(parents=True, exist_ok=True)
 
     if os.name == 'nt' and Path(compiler[0]).name.lower() in ('cl.exe', 'cl', 'clang-cl.exe', 'clang-cl'):

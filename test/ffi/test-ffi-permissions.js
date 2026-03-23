@@ -3,9 +3,10 @@
 const common = require('../common');
 const assert = require('node:assert');
 const { test } = require('node:test');
-const ffi = require('node:ffi');
 
 common.skipIfFFIMissing();
+
+const ffi = require('node:ffi');
 
 const dummyLibraryPath = 'ffi-permission-test-library';
 const denied = {

@@ -173,8 +173,6 @@
                 'include',
                 '--include-dir',
                 'src/x86',
-                '--include-dir',
-                '<(INTERMEDIATE_DIR)',
                 '--define',
                 'FFI_BUILDING',
                 '--define',
