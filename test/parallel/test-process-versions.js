@@ -61,6 +61,11 @@ if (common.hasSQLite) {
   expected_keys.push('sqlite');
 }
 
+if (process.config.variables.node_use_ffi &&
+    !process.config.variables.node_shared_ffi) {
+  expected_keys.push('libffi');
+}
+
 expected_keys.sort();
 expected_keys.unshift('node');
 
@@ -83,6 +88,11 @@ assert.match(process.versions.zstd, commonTemplate);
 
 if (process.config.variables.node_use_lief) {
   assert.match(process.versions.lief, commonTemplate);
+}
+
+if (process.config.variables.node_use_ffi &&
+    !process.config.variables.node_shared_ffi) {
+  assert.match(process.versions.libffi, commonTemplate);
 }
 
 if (hasUndici) {

@@ -1,4 +1,4 @@
-import { hasCrypto, hasIntl, hasInspector, hasSQLite } from '../common/index.mjs';
+import { hasCrypto, hasIntl, hasInspector, hasSQLite, hasFFI } from '../common/index.mjs';
 import assert from 'node:assert';
 import { builtinModules } from 'node:module';
 import { isMainThread } from 'node:worker_threads';
@@ -46,6 +46,9 @@ if (!hasInspector) {
 if (!hasSQLite) {
   publicBuiltins.delete('node:sqlite');
 }
+
+// TODO: Remove this once node:ffi graduates from unflagged.
+publicBuiltins.delete('node:ffi');
 
 for (const id of publicBuiltins) {
   assert.strictEqual(process.getBuiltinModule(id), require(id));
