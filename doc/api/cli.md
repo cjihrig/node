@@ -1940,16 +1940,6 @@ changes:
 
 Disable using [syntax detection][] to determine module type.
 
-### `--no-experimental-ffi`
-
-<!-- YAML
-added: REPLACEME
--->
-
-Disable the experimental [`node:ffi`][] module.
-
-This flag is only available in builds with FFI support.
-
 ### `--no-experimental-global-navigator`
 
 <!-- YAML
