@@ -20,9 +20,6 @@
             'libffi_arch_sources': [
               'src/x86/ffiw64.c',
             ],
-            'libffi_defines': [
-              'LIBFFI_HIDE_BASIC_TYPES',
-            ],
           },
         }],
         ['target_arch == "arm"', {
@@ -31,9 +28,6 @@
               'src/arm/ffi.c',
               'src/arm/sysv_msvc_arm32.S',
             ],
-            'libffi_defines': [
-              'LIBFFI_HIDE_BASIC_TYPES',
-            ],
           },
         }],
         ['target_arch == "arm64"', {
@@ -41,9 +35,6 @@
             'libffi_arch_sources': [
               'src/aarch64/ffi.c',
               'src/aarch64/win64_armasm.S',
-            ],
-            'libffi_defines': [
-              'LIBFFI_HIDE_BASIC_TYPES',
             ],
           },
         }],
@@ -175,8 +166,6 @@
                 'src/x86',
                 '--define',
                 'FFI_STATIC_BUILD',
-                '--define',
-                'LIBFFI_HIDE_BASIC_TYPES',
               ],
             },
           ],
