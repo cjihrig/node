@@ -61,8 +61,7 @@ if (common.hasSQLite) {
   expected_keys.push('sqlite');
 }
 
-if (common.hasFFI &&
-    !process.config.variables.node_shared_ffi) {
+if (common.hasFFI) {
   expected_keys.push('libffi');
 }
 
@@ -90,8 +89,7 @@ if (process.config.variables.node_use_lief) {
   assert.match(process.versions.lief, commonTemplate);
 }
 
-if (common.hasFFI &&
-    !process.config.variables.node_shared_ffi) {
+if (common.hasFFI) {
   assert.match(process.versions.libffi, commonTemplate);
 }
 
