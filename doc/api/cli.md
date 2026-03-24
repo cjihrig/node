@@ -111,7 +111,7 @@ native addons by default.
 Attempts to do so will throw an `ERR_DLOPEN_DISABLED` unless the
 user explicitly passes the `--allow-addons` flag when starting Node.js.
 
-Example without `--allow-child-process`:
+Example:
 
 ```cjs
 // Attempt to require an native addon
@@ -160,7 +160,7 @@ child process by default.
 Attempts to do so will throw an `ERR_ACCESS_DENIED` unless the
 user explicitly passes the `--allow-child-process` flag when starting Node.js.
 
-Example without `--allow-ffi`:
+Example:
 
 ```js
 const childProcess = require('node:child_process');
@@ -1939,6 +1939,16 @@ changes:
 -->
 
 Disable using [syntax detection][] to determine module type.
+
+### `--no-experimental-ffi`
+
+<!-- YAML
+added: REPLACEME
+-->
+
+Disable the experimental [`node:ffi`][] module.
+
+This flag is only available in builds with FFI support.
 
 ### `--no-experimental-global-navigator`
 

@@ -40,8 +40,8 @@ Bundled libffi support currently targets:
 Other targets require building Node.js against a shared libffi with
 `--shared-ffi`. The unofficial GN build does not support `node:ffi`.
 
-When using the [Permission Model](permissions.md#permission-model), FFI APIs are
-restricted unless the [`--allow-ffi`](cli.md#--allow-ffi) flag is provided.
+When using the [Permission Model][], FFI APIs are
+restricted unless the [`--allow-ffi`][] flag is provided.
 
 ## Overview
 
@@ -510,7 +510,7 @@ When `copy` is `false`, the returned `ArrayBuffer` references the original
 native memory directly.
 
 The same lifetime and bounds requirements described for
-[`ffi.toBuffer(pointer, length[, copy])`](#ffitobufferpointer-length-copy) apply
+[`ffi.toBuffer(pointer, length, copy)`][] apply
 here. With `copy: false`, the
 returned `ArrayBuffer` is a zero-copy view of foreign memory and is only safe
 while that memory remains allocated, unchanged in layout, and valid for the
@@ -578,3 +578,7 @@ In particular:
 
 As a general rule, prefer copied values unless zero-copy access is required,
 and keep callback and pointer lifetimes explicit on the native side.
+
+[Permission Model]: permissions.md#permission-model
+[`--allow-ffi`]: cli.md#--allow-ffi
+[`ffi.toBuffer(pointer, length, copy)`]: #ffitobufferpointer-length-copy

@@ -88,7 +88,7 @@ namespace node {
 #define NODE_VERSIONS_KEY_SQLITE(V)
 #endif
 
-#if HAVE_FFI && !NODE_SHARED_FFI
+#if HAVE_FFI
 #define NODE_VERSIONS_KEY_LIBFFI(V) V(libffi)
 #else
 #define NODE_VERSIONS_KEY_LIBFFI(V)

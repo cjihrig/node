@@ -111,7 +111,7 @@
         'GCC_SYMBOLS_PRIVATE_EXTERN': 'YES',
       },
       'defines': [
-        'FFI_BUILDING',
+        'FFI_STATIC_BUILD',
         '<@(libffi_defines)',
       ],
       'include_dirs': [
@@ -174,7 +174,7 @@
                 '--include-dir',
                 'src/x86',
                 '--define',
-                'FFI_BUILDING',
+                'FFI_STATIC_BUILD',
                 '--define',
                 'LIBFFI_HIDE_BASIC_TYPES',
               ],
@@ -188,7 +188,7 @@
           '<(INTERMEDIATE_DIR)',
         ],
         'defines': [
-          'FFI_BUILDING',
+          'FFI_STATIC_BUILD',
         ],
       },
     },

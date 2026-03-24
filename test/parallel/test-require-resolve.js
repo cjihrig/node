@@ -62,7 +62,7 @@ require(fixtures.path('resolve-paths', 'default', 'verify-paths.js'));
   builtinModules.forEach((mod) => {
     // TODO(@jasnell): Remove once node:quic is no longer flagged
     if (mod === 'node:quic') return;
-    // TODO: Remove once node:quic is no longer flagged
+    // TODO: Remove once node:ffi is no longer flagged
     if (mod === 'node:ffi') return;
     assert.strictEqual(require.resolve.paths(mod), null);
     if (!mod.startsWith('node:')) {

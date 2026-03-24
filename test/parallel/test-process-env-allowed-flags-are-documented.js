@@ -49,7 +49,7 @@ if (!hasOpenSSL3) {
   documented.delete('--openssl-shared-config');
 }
 
-if(!common.hasFFI) {
+if (!common.hasFFI) {
   documented.delete('--allow-ffi');
   documented.delete('--experimental-ffi');
 }
